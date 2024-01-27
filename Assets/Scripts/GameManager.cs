@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour
     //Both dictionnaries store useful pieces of information for map's elements. The last parameter of the Vector3 is the rotation.
     private Dictionary<Int32,Vector3> squarePositions = new Dictionary<int, Vector3>();
     private Dictionary<Int32, Vector3> sidePositions = new Dictionary<int, Vector3>();
+    private Dictionary<Int32, GameObject> sideList = new Dictionary<Int32, GameObject>();
+    private Dictionary<Int32, GameObject> squareList = new Dictionary<Int32, GameObject>();
+    private int[] history = new int[0];
     [SerializeField] private GameObject square;
     [SerializeField] private GameObject side; 
 
@@ -21,27 +24,21 @@ public class GameManager : MonoBehaviour
     {
         GeneratePositions();
         DrawMap();
+        ManageNeighbors();
     }
 
     void Update()
     {
-        if(Input.touchCount > 0)
-        {
-            Debug.Log("Touched");
-            Touch touch = Input.GetTouch(0);
-
-            Vector2 screenPosition = touch.position;
-
-            //Store the touch position in world space
-            Vector2 touchPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-
-            CheckAndChangeBlock(touchPosition);
-        }
-
-        if(remainingActions == 0)
+        if (remainingActions <= 0)
         {
             color = !color;
             remainingActions = 2;
+        }
+
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            CheckAndChangeBlock(touch.position);
         }
     }
 
@@ -69,18 +66,35 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Instatiate all gameObject based on squarePositions and sidePositions dictionnaries. 
+    /// Instantiate all gameObject based on squarePositions and sidePositions dictionnaries. 
     /// </summary>
     private void DrawMap()
     {
         foreach(KeyValuePair<int,Vector3> pair in squarePositions)
         {
-            Instantiate(square, pair.Value, Quaternion.identity);
+            GameObject clone = Instantiate(square, pair.Value, Quaternion.identity);
+            squareList.Add(squareList.Count, clone);
         }
 
         foreach(KeyValuePair <int,Vector3> pair in sidePositions)
         {
-            Instantiate(side, pair.Value, Quaternion.Euler(new Vector3(0f,0f,pair.Value.z)));
+            GameObject clone =  Instantiate(side, pair.Value, Quaternion.Euler(new Vector3(0f,0f,pair.Value.z)));
+            sideList.Add(sideList.Count, clone);
+        }
+    }
+
+    /// <summary>
+    /// Initialize all neighbors
+    /// </summary>
+    private void ManageNeighbors()
+    {
+        foreach(KeyValuePair<Int32,GameObject> pair in squareList)
+        {
+            pair.Value.GetComponent<Square>().CalculateNeighborhood();
+        }
+        foreach (KeyValuePair<Int32, GameObject> pair in sideList)
+        {
+            pair.Value.GetComponent<Side>().CalculateNeighborhood();
         }
     }
 
@@ -99,7 +113,6 @@ public class GameManager : MonoBehaviour
                 return true;
             }
         }
-
         return false;
     }
 
@@ -110,17 +123,13 @@ public class GameManager : MonoBehaviour
     /// <param name="position"></param>
     public void CheckAndChangeBlock(Vector2 position)
     {
-        Ray ray = Camera.main.ScreenPointToRay(position);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(position), Vector2.zero);
+        if (hit.collider != null)
         {
-            if (hit.collider != null)
-            {
+            GameObject block = hit.collider.gameObject;
+            if (ChangeState(block, color))
+            {  
                 remainingActions -= 1;
-                if(ChangeState(hit.collider.gameObject, color))
-                {
-                    remainingActions -= 1;
-                }
             }
         }
     }

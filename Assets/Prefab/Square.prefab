@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7801173501082630648}
   - component: {fileID: 4615474507340704957}
-  - component: {fileID: 690030366554158962}
+  - component: {fileID: 78253432955717705}
   m_Layer: 0
   m_Name: Square
   m_TagString: Untagged
@@ -79,7 +79,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.8, y: 0.8}
   m_EdgeRadius: 0
---- !u!114 &690030366554158962
+--- !u!114 &78253432955717705
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -88,14 +88,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 3588440450588856709}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 100a8325059a04f4694a7d2379c3ed44, type: 3}
+  m_Script: {fileID: 11500000, guid: fb0cc72450df75040aecd43ba112da3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasColor: 0
   spriteRenderer: {fileID: 7693939897435247638}
+  color: 0
   lastBlue: {fileID: 21300000, guid: 27747c8790b8d9e4fb23ed90fb095ffd, type: 3}
   lastRed: {fileID: 21300000, guid: f7005bbe4f270cc47a4886bef652fd47, type: 3}
-  Blue: {fileID: 21300000, guid: 676ace4176f606246a58f2fde4aef6e6, type: 3}
-  Red: {fileID: 21300000, guid: 180c3277806556649b2350a3f552852e, type: 3}
+  blue: {fileID: 21300000, guid: 676ace4176f606246a58f2fde4aef6e6, type: 3}
+  red: {fileID: 21300000, guid: 180c3277806556649b2350a3f552852e, type: 3}
 --- !u!1 &6285919142565478588
 GameObject:
   m_ObjectHideFlags: 0

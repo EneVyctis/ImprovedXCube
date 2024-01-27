@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8347269100448786542}
   - component: {fileID: 1822404904628308750}
-  - component: {fileID: 1873830210287238432}
+  - component: {fileID: 7073687718359604523}
   m_Layer: 0
   m_Name: Corner
   m_TagString: Untagged
@@ -79,7 +79,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.85, y: 0.16}
   m_EdgeRadius: 0
---- !u!114 &1873830210287238432
+--- !u!114 &7073687718359604523
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -88,14 +88,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 265537065913979563}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 100a8325059a04f4694a7d2379c3ed44, type: 3}
+  m_Script: {fileID: 11500000, guid: cee76eee42abc0e498658acee0cc8aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasColor: 0
   spriteRenderer: {fileID: 4690367836086302171}
+  color: 0
   lastBlue: {fileID: 21300000, guid: deaf1dae8c3abce49b670c3ff75cc9b8, type: 3}
   lastRed: {fileID: 21300000, guid: 4f7889c2ae9441b4ca20492fd8acdff7, type: 3}
-  Blue: {fileID: 21300000, guid: c6148ac50f8668a469cc62146166b52d, type: 3}
-  Red: {fileID: 21300000, guid: 0c5b5a9a469b9f749a6ccd5c88ec79f0, type: 3}
+  blue: {fileID: 21300000, guid: c6148ac50f8668a469cc62146166b52d, type: 3}
+  red: {fileID: 21300000, guid: 0c5b5a9a469b9f749a6ccd5c88ec79f0, type: 3}
 --- !u!1 &1156166098675194768
 GameObject:
   m_ObjectHideFlags: 0
