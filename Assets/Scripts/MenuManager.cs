@@ -8,8 +8,6 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private Button local;
     [SerializeField] private Button versusAI;
     [SerializeField] private Button multiplayer;
-
-
     #endregion
     void Start()
     {
