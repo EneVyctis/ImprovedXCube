@@ -68,25 +68,6 @@ public class Side : Block
     }
 
     /// <summary>
-    /// Throw a ray to detect the presence of a gameobject. Returns it. 
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
-    private GameObject Search(float x, float y)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(new Vector2(transform.position.x + x, transform.position.y + y), Vector2.zero);
-        if (hit.collider != null)
-        {
-            return hit.collider.gameObject;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    /// <summary>
     /// Check the presence of a gameobject using search and, if it exists, add it to the neighbors' list.
     /// </summary>
     /// <param name="x"></param>

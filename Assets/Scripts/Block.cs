@@ -45,4 +45,23 @@ public class Block : MonoBehaviour
             spriteRenderer.sprite = red;
         }
     }
+
+    /// <summary>
+    /// Throw a ray to detect the presence of a gameobject. Returns it. 
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public GameObject Search(float x, float y)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(new Vector2(transform.position.x + x, transform.position.y + y), Vector2.zero);
+        if (hit.collider != null)
+        {
+            return hit.collider.gameObject;
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

@@ -9,7 +9,7 @@ public class Square : Block
     private bool isAvailable = false;
 
     //Store the square's neighborhood
-    private Dictionary<String, GameObject> SquareNeighbor = new Dictionary<String, GameObject>();
+    private Dictionary<String, GameObject> squareNeighbor = new Dictionary<String, GameObject>();
     private Dictionary<String, GameObject> sides = new Dictionary<String, GameObject>();
     private void Update()
     {
@@ -39,25 +39,6 @@ public class Square : Block
     }
 
     /// <summary>
-    /// Throw a ray to detect the presence of a gameobject. Returns it. 
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
-    private GameObject Search(float x, float y)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(new Vector2(transform.position.x + x, transform.position.y + y), Vector2.zero);
-        if(hit.collider != null)
-        {
-            return hit.collider.gameObject;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    /// <summary>
     /// Check the presence of a gameobject using search and, if it exists, add it to the neightbors' list.
     /// </summary>
     /// <param name="x"></param>
@@ -68,7 +49,7 @@ public class Square : Block
         GameObject square = Search(x,y);
         if (square != null)
         {
-            SquareNeighbor.Add(key, square);
+            squareNeighbor.Add(key, square);
         }
     }
 
@@ -77,11 +58,13 @@ public class Square : Block
         if (team && (hasColor == false) && isAvailable)
         {
             changeColor(team, lastBlue);
+            CheckEndGame();
             return true;
         }
         if (!team && (hasColor == false) && isAvailable)
         {
             changeColor(team, lastRed);
+            CheckEndGame();
             return true;
         }
 
@@ -109,5 +92,64 @@ public class Square : Block
         {
             isAvailable = true;
         }
+    }
+
+    /// <summary>
+    /// Is called whenever a bloc got a color, checks if something appends (victory/defeat).
+    /// </summary>
+    private void CheckEndGame()
+    {
+        foreach(KeyValuePair<String,GameObject> pair in squareNeighbor)
+        {
+            if(CheckNeighborColor(pair.Key, pair.Value, color, 1))
+            {
+                ManageEndGame();
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Return true if 3 squares with the same color are align, else false.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="neighbor"></param>
+    /// <param name="color"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    public bool CheckNeighborColor(String key,GameObject neighbor, bool color, int count)
+    {
+        count++;
+
+        //Just need to check if 3 aligns square has the same color, not more
+        if(count > 3)
+        {
+            return true;
+        }
+        //Case of a border square
+        if(neighbor == null)
+        {
+            return false;
+        }
+
+        if(neighbor.TryGetComponent<Square>(out Square square))
+        {
+            if (square.hasColor)
+            {
+                if(square.color == color)
+                {
+                    return CheckNeighborColor(key, square.squareNeighbor.GetValueOrDefault(key), color,count);
+                }
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Calls whatever is necessary to print the winner. Will be change later. 
+    /// </summary>
+    private void ManageEndGame()
+    {
+        Debug.Log(color ? "Bleu" : "Rouge" + "Wins");
     }
 }
