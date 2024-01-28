@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -103,7 +102,7 @@ public class Square : Block
         {
             if(CheckNeighborColor(pair.Key, pair.Value, color, 1))
             {
-                ManageEndGame();
+                GameManager.Instance.GameHasEnded(color);
             }
         }
     }
@@ -143,13 +142,5 @@ public class Square : Block
             }
         }
         return false;
-    }
-
-    /// <summary>
-    /// Calls whatever is necessary to print the winner. Will be change later. 
-    /// </summary>
-    private void ManageEndGame()
-    {
-        Debug.Log(color ? "Bleu" : "Rouge" + "Wins");
     }
 }

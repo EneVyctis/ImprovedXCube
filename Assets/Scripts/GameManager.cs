@@ -5,6 +5,21 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance => instance;
+    private static GameManager instance;
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     #region variables
     //Both dictionnaries store useful pieces of information for map's elements. The last parameter of the Vector3 is the rotation.
     private Dictionary<Int32,Vector3> squarePositions = new Dictionary<int, Vector3>();
@@ -18,10 +33,16 @@ public class GameManager : MonoBehaviour
     //For the whole game, true means blue player, false means red player
     private bool color = true;
     private int remainingActions = 2;
+    [SerializeField] private GameUiManager uiManager;
+    public string player1Name;
+    public string player2Name;
+    public float time1;
+    public float time2;
     #endregion
 
     void Start()
     {
+        Time.timeScale = 1;
         GeneratePositions();
         DrawMap();
         ManageNeighbors();
@@ -29,6 +50,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        UpdateAndManageTime();
         if (remainingActions <= 0)
         {
             color = !color;
@@ -132,5 +154,36 @@ public class GameManager : MonoBehaviour
                 remainingActions -= 1;
             }
         }
+    }
+
+    /// <summary>
+    /// Manage and actualize player's timers.
+    /// </summary>
+    private void UpdateAndManageTime()
+    {
+        if (color == true)
+        {
+            time1 -= Time.deltaTime;
+        }
+        if (color == false)
+        {
+            time2 -= Time.deltaTime;
+        }
+
+        //Only one can go below 0 before the game ends. Color will thus be the looser.
+        if(time1 < 0 || time2<0)
+        {
+            GameHasEnded(!color);
+        }
+    }
+
+    /// <summary>
+    /// Manage end of the game (yeah really informative i know).
+    /// </summary>
+    /// <param name="winner"></param>
+    public void GameHasEnded(bool winner)
+    {
+        Time.timeScale = 0;
+        uiManager.PrintGameOver(winner);
     }
 }
