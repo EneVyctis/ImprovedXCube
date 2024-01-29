@@ -18,6 +18,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        if (PlayerPrefs.HasKey("PlayerName"))
+        {
+            player1Name = PlayerPrefs.GetString("PlayerName");
+            Debug.Log("Game data loaded!");
+        }
     }
 
     #region variables
@@ -46,6 +51,7 @@ public class GameManager : MonoBehaviour
         GeneratePositions();
         DrawMap();
         ManageNeighbors();
+            
     }
 
     void Update()

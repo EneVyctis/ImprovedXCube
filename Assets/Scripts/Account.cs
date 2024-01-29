@@ -1,22 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Account : MonoBehaviour
 {
-    public static Account Instance => instance;
-    private static Account instance;
-
-    private void Awake()
+    [SerializeField] private Button backToMenu;
+    [SerializeField] private TextMeshProUGUI pseudo;
+    private void Start()
     {
-        if (instance == null)
+        if (PlayerPrefs.HasKey("PlayerName"))
         {
-            instance = this;
+            pseudo.text = PlayerPrefs.GetString("PlayerName");
+            Debug.Log("Game data loaded!");
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        backToMenu.onClick.AddListener(OnBackToMenu);
+    }
+
+    private void OnBackToMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 
     #region Account details
@@ -26,6 +31,9 @@ public class Account : MonoBehaviour
 
     public void ChangePlayerName(string newName)
     {
+        pseudo.text = newName;
         playerName = newName;
+        PlayerPrefs.SetString("PlayerName", playerName);
+        PlayerPrefs.Save();
     }
 }
