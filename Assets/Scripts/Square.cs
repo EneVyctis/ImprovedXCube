@@ -72,7 +72,7 @@ public class Square : Block
 
     private void changeColor(bool team, Sprite sprite)
     {
-        color = team;
+        blockColor = team;
         spriteRenderer.sprite = sprite;
         hasColor = true;
     }
@@ -98,18 +98,22 @@ public class Square : Block
     /// </summary>
     private void CheckEndGame()
     {
-        foreach(KeyValuePair<String,GameObject> pair in squareNeighbor)
+        CheckDirectLine("Up", "Down");
+        CheckDirectLine("TopRight", "DownLeft");
+        CheckDirectLine("TopLeft", "DownRight");
+        CheckDirectLine("Right", "Left");
+        foreach (KeyValuePair<String,GameObject> pair in squareNeighbor)
         {
-            if(CheckNeighborColor(pair.Key, pair.Value, color, 1))
+            if(CheckNeighborColor(pair.Key, pair.Value, blockColor, 1))
             {
-                GameManager.Instance.GameHasEnded(color);
+                GameManager.Instance.GameHasEnded(blockColor);
             }
         }
     }
 
 
     /// <summary>
-    /// Return true if 3 squares with the same color are align, else false.
+    /// Return true if 3 squares with the same color are align and if the 3rd square is put at the extremity , else false.
     /// </summary>
     /// <param name="key"></param>
     /// <param name="neighbor"></param>
@@ -135,12 +139,33 @@ public class Square : Block
         {
             if (square.hasColor)
             {
-                if(square.color == color)
+                if(square.blockColor == color)
                 {
                     return CheckNeighborColor(key, square.squareNeighbor.GetValueOrDefault(key), color,count);
                 }
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// Covers the case when the 3rd square for the winning line is put in the middle of the line (the other function CheckNeighborColor only covers an extreme 3rd square).
+    /// </summary>
+    /// <param name="key1"></param>
+    /// <param name="key2"></param>
+    private void CheckDirectLine(String key1, String key2)
+    {
+        //Mandatory cause some neighbors are null and so can't have a square component.
+        if ((squareNeighbor.GetValueOrDefault(key1) != null) && (squareNeighbor.GetValueOrDefault(key2) != null))
+        {
+            //Mandatory condition cause square blocks are instatiate with blockColor value at false.
+            if ((squareNeighbor.GetValueOrDefault(key1).GetComponent<Square>().hasColor) && (squareNeighbor.GetValueOrDefault(key2).GetComponent<Square>().hasColor == true))
+            {
+                if ((squareNeighbor.GetValueOrDefault(key1).GetComponent<Square>().blockColor == blockColor) && (squareNeighbor.GetValueOrDefault(key2).GetComponent<Square>().blockColor == blockColor))
+                {
+                    GameManager.Instance.GameHasEnded(blockColor);
+                }
+            }
+        }
     }
 }

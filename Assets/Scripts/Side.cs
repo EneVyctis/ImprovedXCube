@@ -40,7 +40,7 @@ public class Side : Block
 
     private void changeColor(bool team, Sprite sprite )
     {
-        color = team;
+        blockColor = team;
         spriteRenderer.sprite = sprite;
         hasColor = true;
         foreach (KeyValuePair<String, GameObject> pair in squareNeighbor)

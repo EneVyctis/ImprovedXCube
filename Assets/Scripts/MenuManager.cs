@@ -11,12 +11,7 @@ public class MenuManager : MonoBehaviour
     #endregion
     void Start()
     {
-        DontDestroyOnLoad(GameManager.Instance);
-    }
-
-    void Update()
-    {
-        
+        local.onClick.AddListener(OnLocalClick);
     }
 
     private void OnLocalClick()

@@ -4,7 +4,7 @@ public class Block : MonoBehaviour
 {
     public bool hasColor = false;
     public SpriteRenderer spriteRenderer;
-    public bool color;
+    public bool blockColor;
 
     //Store all possible Sprites for this block
     [SerializeField] public Sprite lastBlue;
@@ -36,11 +36,11 @@ public class Block : MonoBehaviour
 
     public void setDefinitiveSprite()
     {
-        if (color)
+        if (blockColor)
         {
             spriteRenderer.sprite = blue;
         }
-        if(!color)
+        if(!blockColor)
         {
             spriteRenderer.sprite = red;
         }
