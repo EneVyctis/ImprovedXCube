@@ -27,10 +27,10 @@ public class GameManager : MonoBehaviour
 
     #region variables
     //Both dictionnaries store useful pieces of information for map's elements. The last parameter of the Vector3 is the rotation.
-    private Dictionary<Int32,Vector3> squarePositions = new Dictionary<int, Vector3>();
-    private Dictionary<Int32, Vector3> sidePositions = new Dictionary<int, Vector3>();
-    private Dictionary<Int32, GameObject> sideList = new Dictionary<Int32, GameObject>();
-    private Dictionary<Int32, GameObject> squareList = new Dictionary<Int32, GameObject>();
+    public Dictionary<Int32,Vector3> squarePositions = new Dictionary<int, Vector3>();
+    public Dictionary<Int32, Vector3> sidePositions = new Dictionary<int, Vector3>();
+    public Dictionary<Int32, GameObject> sideList = new Dictionary<Int32, GameObject>();
+    public Dictionary<Int32, GameObject> squareList = new Dictionary<Int32, GameObject>();
     private int[] history = new int[0];
     [SerializeField] private GameObject square;
     [SerializeField] private GameObject side; 

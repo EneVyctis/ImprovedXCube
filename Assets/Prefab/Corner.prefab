@@ -77,7 +77,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.85, y: 0.16}
+  m_Size: {x: 0.85, y: 0.25}
   m_EdgeRadius: 0
 --- !u!114 &7073687718359604523
 MonoBehaviour:
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hasColor: 0
   spriteRenderer: {fileID: 4690367836086302171}
-  color: 0
+  blockColor: 0
   lastBlue: {fileID: 21300000, guid: deaf1dae8c3abce49b670c3ff75cc9b8, type: 3}
   lastRed: {fileID: 21300000, guid: 4f7889c2ae9441b4ca20492fd8acdff7, type: 3}
   blue: {fileID: 21300000, guid: c6148ac50f8668a469cc62146166b52d, type: 3}
