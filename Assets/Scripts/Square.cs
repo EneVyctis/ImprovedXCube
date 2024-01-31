@@ -10,10 +10,6 @@ public class Square : Block
     //Store the square's neighborhood
     private Dictionary<String, GameObject> squareNeighbor = new Dictionary<String, GameObject>();
     private Dictionary<String, GameObject> sides = new Dictionary<String, GameObject>();
-    private void Update()
-    {
-            
-    }
 
     /// <summary>
     /// Searches and stores its neighbors
@@ -168,4 +164,59 @@ public class Square : Block
             }
         }
     }
+
+    #region AI functions
+    public override bool SetAIColor(bool team)
+    {
+        if (team && (hasColor == false) && isAvailable)
+        {
+            blockColor = team;
+            hasColor = true;
+            CheckAIEndGame();
+            return true;
+        }
+        if (!team && (hasColor == false) && isAvailable)
+        {
+            blockColor = team;
+            hasColor = true;
+            CheckAIEndGame();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void CheckAIEndGame()
+    {
+        CheckAIDirectLine("Up", "Down");
+        CheckAIDirectLine("TopRight", "DownLeft");
+        CheckAIDirectLine("TopLeft", "DownRight");
+        CheckAIDirectLine("Right", "Left");
+        foreach (KeyValuePair<String, GameObject> pair in squareNeighbor)
+        {
+            if (CheckNeighborColor(pair.Key, pair.Value, blockColor, 1))
+            {
+                //L'ia a gagné, adapter cette ligne à comment je l'implémente.
+            }
+        }
+    }
+
+    private void CheckAIDirectLine(String key1, String key2)
+    {
+        //Mandatory cause some neighbors are null and so can't have a square component.
+        if ((squareNeighbor.GetValueOrDefault(key1) != null) && (squareNeighbor.GetValueOrDefault(key2) != null))
+        {
+            //Mandatory condition cause square blocks are instatiate with blockColor value at false.
+            if ((squareNeighbor.GetValueOrDefault(key1).GetComponent<Square>().hasColor) && (squareNeighbor.GetValueOrDefault(key2).GetComponent<Square>().hasColor == true))
+            {
+                if ((squareNeighbor.GetValueOrDefault(key1).GetComponent<Square>().blockColor == blockColor) && (squareNeighbor.GetValueOrDefault(key2).GetComponent<Square>().blockColor == blockColor))
+                {
+                    //L'IA a gagné, adapter cette ligne à comment je l'implémente.
+                }
+            }
+        }
+    }
+
+
+    #endregion
 }

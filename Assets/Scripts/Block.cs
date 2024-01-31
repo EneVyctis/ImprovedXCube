@@ -18,14 +18,14 @@ public class Block : MonoBehaviour
     {
         if (color && (hasColor == false))
         {
-            color = true;
+            blockColor = true;
             spriteRenderer.sprite = lastBlue;
             hasColor = true;
             return true;
         }
         if (!color && (hasColor == false))
         {
-            color = false;
+            blockColor = false;
             spriteRenderer.sprite = lastRed;
             hasColor = true;
             return true;
@@ -64,4 +64,42 @@ public class Block : MonoBehaviour
             return null;
         }
     }
+
+    #region AIfunctions
+    /// <summary>
+    /// Use by AI to simulates a play
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns></returns>
+    public virtual bool SetAIColor(bool color)
+    {
+        if (color && (hasColor == false))
+        {
+            blockColor = true;
+            hasColor = true;
+            return true;
+        }
+        if (!color && (hasColor == false))
+        {
+            blockColor = false;
+            hasColor = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Undo changes due to simulations.
+    /// </summary>
+    /// <returns></returns>
+    public bool AIFactoryReset()
+    {
+        blockColor = false;
+        hasColor = false;
+
+        return true;
+    }
+    #endregion
+
 }

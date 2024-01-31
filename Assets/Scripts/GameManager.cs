@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject side; 
 
     //For the whole game, true means blue player, false means red player
-    private bool color = true;
+    public bool color = true;
     private int remainingActions = 2;
     [SerializeField] private GameUiManager uiManager;
     public string player1Name;

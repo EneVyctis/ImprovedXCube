@@ -81,4 +81,24 @@ public class Side : Block
             squareNeighbor.Add(key, side);
         }
     }
+
+    #region AI functions
+    public override bool SetAIColor(bool team)
+    {
+        if (team && (hasColor == false))
+        {
+            blockColor = team;
+            hasColor = true;
+            return true;
+        }
+        if (!team && (hasColor == false))
+        {
+            blockColor = team;
+            hasColor = true;
+            return true;
+        }
+
+        return false;
+    }
+    #endregion
 }
