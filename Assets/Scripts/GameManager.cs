@@ -33,7 +33,8 @@ public class GameManager : MonoBehaviour
     public Dictionary<Int32, GameObject> squareList = new Dictionary<Int32, GameObject>();
     private int[] history = new int[0];
     [SerializeField] private GameObject square;
-    [SerializeField] private GameObject side; 
+    [SerializeField] private GameObject side;
+    [SerializeField] private AIManager aI;
 
     //For the whole game, true means blue player, false means red player
     public bool color = true;
@@ -41,6 +42,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameUiManager uiManager;
     public string player1Name;
     public string player2Name;
+    private bool isPlayer2AI;
     public float time1;
     public float time2;
     #endregion
@@ -62,13 +64,24 @@ public class GameManager : MonoBehaviour
             color = !color;
             remainingActions = 2;
         }
-
-        if (Input.touchCount > 0)
+        if (!isPlayer2AI) 
         {
-            Touch touch = Input.GetTouch(0);
-            CheckAndChangeBlock(touch.position);
+            if (Input.touchCount > 0)
+            {
+                Touch touch = Input.GetTouch(0);
+                CheckAndChangeBlock(touch.position);
+            }
+        }
+        else
+        {
+            if(color == false)
+            {
+                aI.RunAI();
+            }
         }
     }
+
+
 
     /// <summary>
     /// Generates all coordonates of squares and sides and store them in squarepositions and sidepositions

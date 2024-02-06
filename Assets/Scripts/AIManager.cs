@@ -22,6 +22,10 @@ public class AIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Calculates each possible moove along with its score and store them in the "scores" dictionnary.
+    /// </summary>
+    /// <param name="Depth"></param>
     private void MiniMax(int Depth)
     {
         foreach(KeyValuePair<int,Block> pair in playableBlock)
@@ -42,6 +46,15 @@ public class AIManager : MonoBehaviour
         }
     }
 
+    private void CalculatesScores(int play1, int play2) 
+    {
+            
+    }
+
+    public void RunAI()
+    {
+        
+    }
 
 
 }
