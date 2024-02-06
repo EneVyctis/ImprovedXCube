@@ -12,7 +12,10 @@ public class Block : MonoBehaviour
     [SerializeField] private Sprite blue;
     [SerializeField] private Sprite red;
 
-
+    public virtual bool CheckAIEndGame()
+    {
+        return false;
+    }
 
     public virtual bool setSprite(bool color)
     {
@@ -34,6 +37,10 @@ public class Block : MonoBehaviour
         return false;
     }
 
+    public virtual bool IsSquareAndAvailable()
+    {
+        return false;
+    }
     public void setDefinitiveSprite()
     {
         if (blockColor)

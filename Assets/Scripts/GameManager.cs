@@ -42,7 +42,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameUiManager uiManager;
     public string player1Name;
     public string player2Name;
-    private bool isPlayer2AI;
     public float time1;
     public float time2;
     #endregion
@@ -64,7 +63,7 @@ public class GameManager : MonoBehaviour
             color = !color;
             remainingActions = 2;
         }
-        if (!isPlayer2AI) 
+        if (!GameModeManager.isVersusAi) 
         {
             if (Input.touchCount > 0)
             {

@@ -89,6 +89,11 @@ public class Square : Block
         }
     }
 
+    public override bool IsSquareAndAvailable()
+    {
+        return isAvailable;
+    }
+
     /// <summary>
     /// Is called whenever a bloc got a color, checks if something appends (victory/defeat).
     /// </summary>
@@ -172,21 +177,19 @@ public class Square : Block
         {
             blockColor = team;
             hasColor = true;
-            CheckAIEndGame();
             return true;
         }
         if (!team && (hasColor == false) && isAvailable)
         {
             blockColor = team;
             hasColor = true;
-            CheckAIEndGame();
             return true;
         }
 
         return false;
     }
 
-    private void CheckAIEndGame()
+    public override bool CheckAIEndGame()
     {
         CheckAIDirectLine("Up", "Down");
         CheckAIDirectLine("TopRight", "DownLeft");
@@ -196,9 +199,10 @@ public class Square : Block
         {
             if (CheckNeighborColor(pair.Key, pair.Value, blockColor, 1))
             {
-                //L'ia a gagné, adapter cette ligne à comment je l'implémente.
+                return true;
             }
         }
+        return false;
     }
 
     private void CheckAIDirectLine(String key1, String key2)
@@ -216,7 +220,6 @@ public class Square : Block
             }
         }
     }
-
 
     #endregion
 }
