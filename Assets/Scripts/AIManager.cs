@@ -26,7 +26,7 @@ public class AIManager : MonoBehaviour
     /// Calculates each possible moove along with its score and store them in the "scores" dictionnary.
     /// </summary>
     /// <param name="Depth"></param>
-    private void MiniMax(int Depth, Dictionary<int, Vector2Int> scores)
+    private void MiniMax(int Depth, Dictionary<int, Vector3Int> scores)
     {
         foreach(KeyValuePair<int,Block> pair in playableBlock)
         {
@@ -49,14 +49,14 @@ public class AIManager : MonoBehaviour
         }
     }
 
-    private bool CalculatesScores(int play1, int play2, Dictionary<int, Vector2Int> scores) 
+    private bool CalculatesScores(int play1, int play2, Dictionary<int, Vector3Int> scores) 
     {
         Block block1 = playableBlock.GetValueOrDefault(play1);
         Block block2 = playableBlock.GetValueOrDefault(play2);
         //If one of the tested moves is a game ending moves, it gets a really high score of 500
         if (block1.CheckAIEndGame() == true || block2.CheckAIEndGame() == true)
         {
-            scores.Add(500,new Vector2Int(play1, play2));
+            scores.Add(500,new Vector3Int(play1, play2));
             return true;
         }
         
@@ -65,48 +65,48 @@ public class AIManager : MonoBehaviour
             //If the 2nd play end the game, it's still 500.
             if (block2.CheckAIEndGame())
             {
-                scores.Add(500, new Vector2Int(play1, play2));
+                scores.Add(scores.Count, new Vector3Int(500,play1, play2));
                 return true;
             }
             //If we can fill 2 square instead of one, it's better, 400.
             if(block2.IsSquareAndAvailable())
             {
-                scores.Add(400, new Vector2Int(play1, play2));
+                scores.Add(scores.Count, new Vector3Int(400, play1, play2));
                 return true;
             }
             //If block one can be fill, it's still fine 300.
             else
             {
-                scores.Add(300, new Vector2Int(play1, play2));
+                scores.Add(scores.Count, new Vector3Int(300,play1, play2));
                 return true;
             }
         }
         //In the case of a side play1, if play2 is a square, its worth 200.
         if (block2.IsSquareAndAvailable())
         {
-            scores.Add(200, new Vector2Int(play1, play2));
+            scores.Add(scores.Count, new Vector3Int(200,play1, play2));
             return true;
         }
 
         //For now, any other moves worth 100.
-        scores.Add(100, new Vector2Int(play1, play2));
+        scores.Add(scores.Count, new Vector3Int(100,play1, play2));
         return false;
     }
 
     public void RunAI()
     {
-        Dictionary<int, Vector2Int> scores = new Dictionary<int, Vector2Int>();
+        Dictionary<int, Vector3Int> scores = new Dictionary<int, Vector3Int>();
         MiniMax(1, scores);
-        int playScore = 100;
-        foreach(KeyValuePair<int, Vector2Int> pair in scores)
+        int playScore = 0;
+        foreach(KeyValuePair<int, Vector3Int> pair in scores)
         {
             if(pair.Key> playScore)
             {
-                playScore = pair.Key;
+                playScore = pair.Value.x;
             }
         }
-        GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).x));
         GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).y));
+        GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).z));
     }
 
 

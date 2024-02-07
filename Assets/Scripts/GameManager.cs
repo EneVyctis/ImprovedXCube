@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
             color = !color;
             remainingActions = 2;
         }
-        if (!GameModeManager.isVersusAi) 
+        if (GameModeManager.isVersusAi == false || color == true) 
         {
             if (Input.touchCount > 0)
             {
@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour
         foreach(KeyValuePair <int,Vector3> pair in sidePositions)
         {
             GameObject clone =  Instantiate(side, pair.Value, Quaternion.Euler(new Vector3(0f,0f,pair.Value.z)));
-            sideList.Add(sideList.Count, clone);
+            sideList.Add(squareList.Count + sideList.Count, clone);
         }
     }
 
