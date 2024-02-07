@@ -73,9 +73,13 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("test");
             if(color == false)
             {
-                aI.RunAI();
+                if (aI.RunAI())
+                {
+
+                }
             }
         }
     }

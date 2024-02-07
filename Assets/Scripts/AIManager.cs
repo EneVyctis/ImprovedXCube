@@ -28,23 +28,33 @@ public class AIManager : MonoBehaviour
     /// <param name="Depth"></param>
     private void MiniMax(int Depth, Dictionary<int, Vector3Int> scores)
     {
-        foreach(KeyValuePair<int,Block> pair in playableBlock)
+        if (playableBlock.Count >= 40)
         {
-            int play1;
-            int play2;
-            bool color = GameManager.Instance.color;
-            if(pair.Value.hasColor == false)
+            int play1 = playRandomBlock();
+            int play2 = playRandomBlock();
+            GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(play1));
+            GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(play2));
+        }
+        else
+        {
+            foreach (KeyValuePair<int, Block> pair in playableBlock)
             {
-                pair.Value.SetAIColor(color);
-                play1 = pair.Key;
-                foreach(KeyValuePair<int,Block> couple in playableBlock)
+                int play1;
+                int play2;
+                bool color = GameManager.Instance.color;
+                if (pair.Value.hasColor == false)
                 {
-                    couple.Value.SetAIColor(color);
-                    play2 = couple.Key;
-                    CalculatesScores(play1, play2, scores);
-                    couple.Value.AIFactoryReset();
+                    pair.Value.SetAIColor(color);
+                    play1 = pair.Key;
+                    foreach (KeyValuePair<int, Block> couple in playableBlock)
+                    {
+                        couple.Value.SetAIColor(color);
+                        play2 = couple.Key;
+                        CalculatesScores(play1, play2, scores);
+                        couple.Value.AIFactoryReset();
+                    }
+                    pair.Value.AIFactoryReset();
                 }
-                pair.Value.AIFactoryReset();
             }
         }
     }
@@ -59,7 +69,6 @@ public class AIManager : MonoBehaviour
             scores.Add(500,new Vector3Int(play1, play2));
             return true;
         }
-        
         if (block1.IsSquareAndAvailable())
         {
             //If the 2nd play end the game, it's still 500.
@@ -93,21 +102,40 @@ public class AIManager : MonoBehaviour
         return false;
     }
 
-    public void RunAI()
+    public bool RunAI()
     {
         Dictionary<int, Vector3Int> scores = new Dictionary<int, Vector3Int>();
         MiniMax(1, scores);
         int playScore = 0;
         foreach(KeyValuePair<int, Vector3Int> pair in scores)
         {
-            if(pair.Key> playScore)
+            if(pair.Value.x> scores.GetValueOrDefault(playScore).x)
             {
                 playScore = pair.Value.x;
             }
         }
         GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).y));
         GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).z));
+        return true;
     }
 
+
+    /// <summary>
+    /// Returns a random available block's number.
+    /// </summary>
+    /// <returns></returns>
+    private int playRandomBlock()
+    {
+        int selected = Random.Range(0, playableBlock.Count);
+        if(playableBlock.GetValueOrDefault(selected).hasColor == true)
+        {
+            return playRandomBlock();
+        }
+
+        else
+        {
+            return selected;
+        }
+    }
 
 }
