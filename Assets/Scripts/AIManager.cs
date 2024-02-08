@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 
 public class AIManager : MonoBehaviour
 {
@@ -11,12 +10,7 @@ public class AIManager : MonoBehaviour
 
     void Start()
     {
-        foreach(KeyValuePair<int,GameObject> pair in GameManager.Instance.sideList)
-        {
-            playableBlock.Add(pair.Key, pair.Value.GetComponent<Block>());
-            playablePositions.Add(pair.Key, new Vector2(pair.Value.transform.position.x, pair.Value.transform.position.y));
-        }
-        foreach (KeyValuePair<int, GameObject> pair in GameManager.Instance.squareList)
+        foreach(KeyValuePair<int,GameObject> pair in GameManager.Instance.blocksList)
         {
             playableBlock.Add(pair.Key, pair.Value.GetComponent<Block>());
             playablePositions.Add(pair.Key, new Vector2(pair.Value.transform.position.x, pair.Value.transform.position.y));
@@ -30,32 +24,27 @@ public class AIManager : MonoBehaviour
     /// <param name="Depth"></param>
     private void MiniMax(int Depth, Dictionary<int, Vector3Int> scores)
     {
-        if (playableBlock.Count >= 60)
+
+        foreach (KeyValuePair<int, Block> pair in playableBlock)
         {
-            int play1 = playRandomBlock();
-            int play2 = playRandomBlock();
-            CalculatesScores(play1, play2, scores);
-        }
-        else
-        {
-            foreach (KeyValuePair<int, Block> pair in playableBlock)
+            int play1;
+            int play2;
+            bool color = GameManager.Instance.color;
+            if (pair.Value.hasColor == false && pair.Value.IsSquareAndAvailable() == true)
             {
-                int play1;
-                int play2;
-                bool color = GameManager.Instance.color;
-                if (pair.Value.hasColor == false)
+                pair.Value.SetAIColor(color);
+                play1 = pair.Key;
+                foreach (KeyValuePair<int, Block> couple in playableBlock)
                 {
-                    pair.Value.SetAIColor(color);
-                    play1 = pair.Key;
-                    foreach (KeyValuePair<int, Block> couple in playableBlock)
+                    if (couple.Value.hasColor == false && couple.Value.IsSquareAndAvailable() == true)
                     {
                         couple.Value.SetAIColor(color);
                         play2 = couple.Key;
                         CalculatesScores(play1, play2, scores);
                         couple.Value.AIFactoryReset();
                     }
-                    pair.Value.AIFactoryReset();
                 }
+                pair.Value.AIFactoryReset();
             }
         }
     }
@@ -67,7 +56,7 @@ public class AIManager : MonoBehaviour
         //If one of the tested moves is a game ending moves, it gets a really high score of 500
         if (block1.CheckAIEndGame() == true || block2.CheckAIEndGame() == true)
         {
-            scores.Add(500,new Vector3Int(play1, play2));
+            scores.Add(scores.Count,new Vector3Int(play1, play2));
             return true;
         }
         if (block1.IsSquareAndAvailable())
@@ -102,8 +91,8 @@ public class AIManager : MonoBehaviour
         scores.Add(scores.Count, new Vector3Int(100,play1, play2));
         return false;
     }
-
-    public bool RunAI()
+    
+    public IEnumerator RunAI()
     {
         Dictionary<int, GameObject> playsList = GameManager.Instance.playsList;
         playableBlock.Remove(playsList.GetValueOrDefault(playsList.Count - 2 ).GetComponent<Block>().key);
@@ -119,8 +108,9 @@ public class AIManager : MonoBehaviour
             }
         }
         GameManager.Instance.AICheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).y));
+        yield return new WaitForEndOfFrame();
         GameManager.Instance.AICheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).z));
-        return true;
+        yield return new WaitForEndOfFrame() ;
     }
 
 

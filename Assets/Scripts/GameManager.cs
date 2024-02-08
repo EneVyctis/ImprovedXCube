@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviour
         {
             if(color == false)
             {
-                aI.RunAI();
+                StartCoroutine(aI.RunAI());
             }
         }
     }
