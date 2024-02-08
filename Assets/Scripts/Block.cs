@@ -39,7 +39,7 @@ public class Block : MonoBehaviour
 
     public virtual bool IsSquareAndAvailable()
     {
-        return false;
+        return true;
     }
     public void setDefinitiveSprite()
     {

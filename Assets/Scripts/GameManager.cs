@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
         if (PlayerPrefs.HasKey("PlayerName"))
         {
             player1Name = PlayerPrefs.GetString("PlayerName");
-            Debug.Log("Game data loaded!");
         }
     }
 
@@ -73,13 +72,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("test");
             if(color == false)
             {
-                if (aI.RunAI())
-                {
-
-                }
+                aI.RunAI();
             }
         }
     }
@@ -173,6 +168,19 @@ public class GameManager : MonoBehaviour
             GameObject block = hit.collider.gameObject;
             if (ChangeState(block, color))
             {  
+                remainingActions -= 1;
+            }
+        }
+    }
+
+    public void AICheckAndChangeBlock(Vector2 position)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
+        if (hit.collider != null)
+        {
+            GameObject block = hit.collider.gameObject;
+            if (ChangeState(block, color))
+            {
                 remainingActions -= 1;
             }
         }

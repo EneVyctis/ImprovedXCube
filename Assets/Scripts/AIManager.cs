@@ -13,12 +13,12 @@ public class AIManager : MonoBehaviour
         foreach(KeyValuePair<int,GameObject> pair in GameManager.Instance.sideList)
         {
             playableBlock.Add(pair.Key, pair.Value.GetComponent<Block>());
-            playablePositions.Add(pair.Key, pair.Value.transform.position);
+            playablePositions.Add(pair.Key, new Vector2(pair.Value.transform.position.x, pair.Value.transform.position.y));
         }
         foreach (KeyValuePair<int, GameObject> pair in GameManager.Instance.squareList)
         {
             playableBlock.Add(pair.Key, pair.Value.GetComponent<Block>());
-            playablePositions.Add(pair.Key, pair.Value.transform.position);
+            playablePositions.Add(pair.Key, new Vector2(pair.Value.transform.position.x, pair.Value.transform.position.y));
         }
     }
 
@@ -28,12 +28,11 @@ public class AIManager : MonoBehaviour
     /// <param name="Depth"></param>
     private void MiniMax(int Depth, Dictionary<int, Vector3Int> scores)
     {
-        if (playableBlock.Count >= 40)
+        if (playableBlock.Count >= 20)
         {
             int play1 = playRandomBlock();
             int play2 = playRandomBlock();
-            GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(play1));
-            GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(play2));
+            CalculatesScores(play1, play2, scores);
         }
         else
         {
@@ -114,8 +113,8 @@ public class AIManager : MonoBehaviour
                 playScore = pair.Value.x;
             }
         }
-        GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).y));
-        GameManager.Instance.CheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).z));
+        GameManager.Instance.AICheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).y));
+        GameManager.Instance.AICheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).z));
         return true;
     }
 
@@ -127,7 +126,7 @@ public class AIManager : MonoBehaviour
     private int playRandomBlock()
     {
         int selected = Random.Range(0, playableBlock.Count);
-        if(playableBlock.GetValueOrDefault(selected).hasColor == true)
+        if(playableBlock.GetValueOrDefault(selected).hasColor == true || playableBlock.GetValueOrDefault(selected).IsSquareAndAvailable() == false)
         {
             return playRandomBlock();
         }
