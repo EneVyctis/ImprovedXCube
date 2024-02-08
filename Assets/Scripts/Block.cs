@@ -5,6 +5,7 @@ public class Block : MonoBehaviour
     public bool hasColor = false;
     public SpriteRenderer spriteRenderer;
     public bool blockColor;
+    public int key;
 
     //Store all possible Sprites for this block
     [SerializeField] public Sprite lastBlue;

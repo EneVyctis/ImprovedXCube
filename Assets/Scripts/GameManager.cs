@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     public Dictionary<Int32, Vector3> sidePositions = new Dictionary<int, Vector3>();
     public Dictionary<Int32, GameObject> sideList = new Dictionary<Int32, GameObject>();
     public Dictionary<Int32, GameObject> squareList = new Dictionary<Int32, GameObject>();
+    public Dictionary<Int32, GameObject> blocksList = new Dictionary<Int32, GameObject>();
+    public Dictionary<Int32, GameObject> playsList = new Dictionary<Int32, GameObject>();
     private int[] history = new int[0];
     [SerializeField] private GameObject square;
     [SerializeField] private GameObject side;
@@ -113,12 +115,16 @@ public class GameManager : MonoBehaviour
         {
             GameObject clone = Instantiate(square, pair.Value, Quaternion.identity);
             squareList.Add(squareList.Count, clone);
+            blocksList.Add(blocksList.Count, clone);
+            clone.GetComponent<Block>().key = squareList.Count;
         }
 
         foreach(KeyValuePair <int,Vector3> pair in sidePositions)
         {
             GameObject clone =  Instantiate(side, pair.Value, Quaternion.Euler(new Vector3(0f,0f,pair.Value.z)));
             sideList.Add(squareList.Count + sideList.Count, clone);
+            blocksList.Add(blocksList.Count, clone);
+            clone.GetComponent<Block>().key = blocksList.Count;
         }
     }
 
@@ -167,7 +173,8 @@ public class GameManager : MonoBehaviour
         {
             GameObject block = hit.collider.gameObject;
             if (ChangeState(block, color))
-            {  
+            {
+                playsList.Add(playsList.Count, block);
                 remainingActions -= 1;
             }
         }

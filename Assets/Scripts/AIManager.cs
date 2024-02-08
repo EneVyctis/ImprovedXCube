@@ -7,6 +7,7 @@ public class AIManager : MonoBehaviour
 {
     private Dictionary<int, Block> playableBlock = new Dictionary<int, Block>();
     private Dictionary<int, Vector2> playablePositions = new Dictionary<int, Vector2>();
+    private int totalOfBlocks;
 
     void Start()
     {
@@ -20,6 +21,7 @@ public class AIManager : MonoBehaviour
             playableBlock.Add(pair.Key, pair.Value.GetComponent<Block>());
             playablePositions.Add(pair.Key, new Vector2(pair.Value.transform.position.x, pair.Value.transform.position.y));
         }
+        totalOfBlocks = playableBlock.Count;
     }
 
     /// <summary>
@@ -28,7 +30,7 @@ public class AIManager : MonoBehaviour
     /// <param name="Depth"></param>
     private void MiniMax(int Depth, Dictionary<int, Vector3Int> scores)
     {
-        if (playableBlock.Count >= 20)
+        if (playableBlock.Count >= 60)
         {
             int play1 = playRandomBlock();
             int play2 = playRandomBlock();
@@ -103,6 +105,9 @@ public class AIManager : MonoBehaviour
 
     public bool RunAI()
     {
+        Dictionary<int, GameObject> playsList = GameManager.Instance.playsList;
+        playableBlock.Remove(playsList.GetValueOrDefault(playsList.Count - 2 ).GetComponent<Block>().key);
+        playableBlock.Remove(playsList.GetValueOrDefault(playsList.Count - 1).GetComponent<Block>().key);
         Dictionary<int, Vector3Int> scores = new Dictionary<int, Vector3Int>();
         MiniMax(1, scores);
         int playScore = 0;
@@ -125,8 +130,8 @@ public class AIManager : MonoBehaviour
     /// <returns></returns>
     private int playRandomBlock()
     {
-        int selected = Random.Range(0, playableBlock.Count);
-        if(playableBlock.GetValueOrDefault(selected).hasColor == true || playableBlock.GetValueOrDefault(selected).IsSquareAndAvailable() == false)
+        int selected = Random.Range(0, totalOfBlocks);
+        if(playableBlock.GetValueOrDefault(selected) == null || playableBlock.GetValueOrDefault(selected).hasColor == true || playableBlock.GetValueOrDefault(selected).IsSquareAndAvailable() == false)
         {
             return playRandomBlock();
         }
