@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Block : MonoBehaviour
@@ -38,9 +40,14 @@ public class Block : MonoBehaviour
         return false;
     }
 
-    public virtual bool IsSquareAndAvailable()
+    public virtual bool IsAvailable()
     {
         return true;
+    }
+
+    public virtual bool IsSquare()
+    {
+        return false;
     }
     public void setDefinitiveSprite()
     {
@@ -101,11 +108,10 @@ public class Block : MonoBehaviour
     /// Undo changes due to simulations.
     /// </summary>
     /// <returns></returns>
-    public bool AIFactoryReset()
+    public virtual bool AIFactoryReset()
     {
         blockColor = false;
         hasColor = false;
-
         return true;
     }
     #endregion

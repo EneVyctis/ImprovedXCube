@@ -89,16 +89,39 @@ public class Side : Block
         {
             blockColor = team;
             hasColor = true;
+            foreach (KeyValuePair<String, GameObject> pair in squareNeighbor)
+            {
+                pair.Value.GetComponent<Square>().CheckAvailability();
+            }
             return true;
         }
         if (!team && (hasColor == false))
         {
             blockColor = team;
             hasColor = true;
+            foreach (KeyValuePair<String, GameObject> pair in squareNeighbor)
+            {
+                pair.Value.GetComponent<Square>().CheckAvailability();
+            }
             return true;
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Undo changes due to simulations.
+    /// </summary>
+    /// <returns></returns>
+    public override bool AIFactoryReset()
+    {
+        blockColor = false;
+        hasColor = false;
+        foreach (KeyValuePair<String, GameObject> pair in squareNeighbor)
+        {
+            pair.Value.GetComponent<Square>().CheckAvailability();
+        }
+        return true;
     }
     #endregion
 }

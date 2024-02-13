@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
 public class Square : Block
@@ -87,13 +88,21 @@ public class Square : Block
         {
             isAvailable = true;
         }
+        else
+        {
+            isAvailable= false;
+        }
     }
 
-    public override bool IsSquareAndAvailable()
+    public override bool IsAvailable()
     {
         return isAvailable;
     }
 
+    public override bool IsSquare()
+    {
+        return true;
+    }
     /// <summary>
     /// Is called whenever a bloc got a color, checks if something appends (victory/defeat).
     /// </summary>
