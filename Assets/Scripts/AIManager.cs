@@ -30,14 +30,14 @@ public class AIManager : MonoBehaviour
             bool color = GameManager.Instance.color;
             if (pair.Value.hasColor == false && pair.Value.IsAvailable() == true)
             {
-                pair.Value.SetAIColor(color);
                 play1 = pair.Key;
+                pair.Value.SetAIColor(color);
                 foreach (KeyValuePair<int, Block> couple in playableBlock)
                 {
                     if (couple.Value.hasColor == false && couple.Value.IsAvailable() == true)
                     {
-                        couple.Value.SetAIColor(color);
                         play2 = couple.Key;
+                        couple.Value.SetAIColor(color);
                         CalculatesScores(play1, play2, scores);
                         couple.Value.AIFactoryReset();
                     }
@@ -78,14 +78,16 @@ public class AIManager : MonoBehaviour
                 return true;
             }
         }
-
-        scores.Add(scores.Count, new Vector3Int(0, play1, play2));
+        
+        //Give a random score so the AI choose a random play by default.
+        scores.Add(scores.Count, new Vector3Int(Random.Range(0,100), play1, play2));
 
         return true;
     }
     
     public IEnumerator RunAI()
     {
+        Debug.Log(playableBlock.Count);
         Dictionary<int, GameObject> playsList = GameManager.Instance.playsList;
         playableBlock.Remove(playsList.GetValueOrDefault(playsList.Count - 2 ).GetComponent<Block>().key);
         playableBlock.Remove(playsList.GetValueOrDefault(playsList.Count - 1).GetComponent<Block>().key);
@@ -99,10 +101,13 @@ public class AIManager : MonoBehaviour
                 playScore = pair.Key;
             }
         }
+        playableBlock.Remove(scores.GetValueOrDefault(playScore).y);
+        playableBlock.Remove(scores.GetValueOrDefault(playScore).z);
         GameManager.Instance.AICheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).y));
         yield return new WaitForEndOfFrame();
         GameManager.Instance.AICheckAndChangeBlock(playablePositions.GetValueOrDefault(scores.GetValueOrDefault(playScore).z));
         yield return new WaitForEndOfFrame() ;
+        GameManager.Instance.isAiPlaying = false;
     }
 
 }

@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     //For the whole game, true means blue player, false means red player
     public bool color = true;
     private int remainingActions = 2;
+    public bool isAiPlaying;
     [SerializeField] private GameUiManager uiManager;
     public string player1Name;
     public string player2Name;
@@ -74,8 +75,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if(color == false)
+            if(color == false && isAiPlaying == false)
             {
+                isAiPlaying = true;
                 StartCoroutine(aI.RunAI());
             }
         }
@@ -116,7 +118,8 @@ public class GameManager : MonoBehaviour
             GameObject clone = Instantiate(square, pair.Value, Quaternion.identity);
             squareList.Add(squareList.Count, clone);
             blocksList.Add(blocksList.Count, clone);
-            clone.GetComponent<Block>().key = squareList.Count;
+            Debug.Log(blocksList.GetValueOrDefault(blocksList.Count-1));
+            clone.GetComponent<Block>().key = squareList.Count -1;
         }
 
         foreach(KeyValuePair <int,Vector3> pair in sidePositions)
@@ -124,7 +127,7 @@ public class GameManager : MonoBehaviour
             GameObject clone =  Instantiate(side, pair.Value, Quaternion.Euler(new Vector3(0f,0f,pair.Value.z)));
             sideList.Add(squareList.Count + sideList.Count, clone);
             blocksList.Add(blocksList.Count, clone);
-            clone.GetComponent<Block>().key = blocksList.Count;
+            clone.GetComponent<Block>().key = blocksList.Count -1;
         }
     }
 
@@ -188,6 +191,7 @@ public class GameManager : MonoBehaviour
             GameObject block = hit.collider.gameObject;
             if (ChangeState(block, color))
             {
+                playsList.Add(playsList.Count, block);
                 remainingActions -= 1;
             }
         }
