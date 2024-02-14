@@ -87,10 +87,9 @@ public class AIManager : MonoBehaviour
     
     public IEnumerator RunAI()
     {
-        Debug.Log(playableBlock.Count);
-        Dictionary<int, GameObject> playsList = GameManager.Instance.playsList;
-        playableBlock.Remove(playsList.GetValueOrDefault(playsList.Count - 2 ).GetComponent<Block>().key);
-        playableBlock.Remove(playsList.GetValueOrDefault(playsList.Count - 1).GetComponent<Block>().key);
+        Dictionary<int, GameObject> historyList = GameManager.Instance.historyList;
+        playableBlock.Remove(historyList.GetValueOrDefault(historyList.Count - 2 ).GetComponent<Block>().key);
+        playableBlock.Remove(historyList.GetValueOrDefault(historyList.Count - 1).GetComponent<Block>().key);
         Dictionary<int, Vector3Int> scores = new Dictionary<int, Vector3Int>();
         MiniMax(1, scores);
         int playScore = 0;

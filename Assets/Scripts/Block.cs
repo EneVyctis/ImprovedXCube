@@ -2,8 +2,11 @@ using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public bool hasColor = false;
+    #region variables
     public SpriteRenderer spriteRenderer;
+
+    //State variables
+    public bool hasColor = false;
     public bool blockColor;
     public int key;
 
@@ -12,8 +15,14 @@ public class Block : MonoBehaviour
     [SerializeField] public Sprite lastRed;
     [SerializeField] private Sprite blue;
     [SerializeField] private Sprite red;
+    #endregion
 
-    public virtual bool CheckAIEndGame()
+    public virtual bool IsAvailable()
+    {
+        return true;
+    }
+
+    public virtual bool IsSquare()
     {
         return false;
     }
@@ -38,22 +47,16 @@ public class Block : MonoBehaviour
         return false;
     }
 
-    public virtual bool IsAvailable()
-    {
-        return true;
-    }
-
-    public virtual bool IsSquare()
-    {
-        return false;
-    }
+    /// <summary>
+    /// Set the definitive sprite when the enemy player's turn ends. 
+    /// </summary>
     public void setDefinitiveSprite()
     {
         if (blockColor)
         {
             spriteRenderer.sprite = blue;
         }
-        if(!blockColor)
+        if (!blockColor)
         {
             spriteRenderer.sprite = red;
         }
@@ -111,6 +114,15 @@ public class Block : MonoBehaviour
         blockColor = false;
         hasColor = false;
         return true;
+    }
+
+    /// <summary>
+    /// Override for squares. Similar to CheckEndGame but is used for simulations.
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool CheckAIEndGame()
+    {
+        return false;
     }
     #endregion
 

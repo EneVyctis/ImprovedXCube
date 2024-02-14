@@ -4,12 +4,68 @@ using UnityEngine;
 
 public class Square : Block
 {
+    #region variables
     //A square needs every of its sides to be colored before being available.
     private bool isAvailable = false;
 
     //Store the square's neighborhood
     private Dictionary<String, GameObject> squareNeighbor = new Dictionary<String, GameObject>();
     private Dictionary<String, GameObject> sides = new Dictionary<String, GameObject>();
+    #endregion
+
+    public override bool IsAvailable()
+    {
+        return isAvailable;
+    }
+
+    public override bool IsSquare()
+    {
+        return true;
+    }
+    public override bool setSprite(bool team)
+    {
+        if (team && (hasColor == false) && isAvailable)
+        {
+            changeColor(team, lastBlue);
+            CheckEndGame();
+            return true;
+        }
+        if (!team && (hasColor == false) && isAvailable)
+        {
+            changeColor(team, lastRed);
+            CheckEndGame();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void changeColor(bool team, Sprite sprite)
+    {
+        blockColor = team;
+        spriteRenderer.sprite = sprite;
+        hasColor = true;
+    }
+
+    public void CheckAvailability()
+    {
+        int count = 0;
+        foreach (KeyValuePair<string, GameObject> pair in sides)
+        {
+            if (pair.Value.GetComponent<Block>().hasColor)
+            {
+                count++;
+            }
+        }
+        if (count == 4)
+        {
+            isAvailable = true;
+        }
+        else
+        {
+            isAvailable = false;
+        }
+    }
 
     /// <summary>
     /// Searches and stores its neighbors
@@ -48,60 +104,6 @@ public class Square : Block
         }
     }
 
-    public override bool setSprite(bool team)
-    {
-        if (team && (hasColor == false) && isAvailable)
-        {
-            changeColor(team, lastBlue);
-            CheckEndGame();
-            return true;
-        }
-        if (!team && (hasColor == false) && isAvailable)
-        {
-            changeColor(team, lastRed);
-            CheckEndGame();
-            return true;
-        }
-
-        return false;
-    }
-
-    private void changeColor(bool team, Sprite sprite)
-    {
-        blockColor = team;
-        spriteRenderer.sprite = sprite;
-        hasColor = true;
-    }
-
-    public void CheckAvailability()
-    {
-        int count = 0;
-        foreach(KeyValuePair<string,GameObject> pair in sides)
-        {
-            if (pair.Value.GetComponent<Block>().hasColor)
-            {
-                count++;
-            }
-        }
-        if (count == 4)
-        {
-            isAvailable = true;
-        }
-        else
-        {
-            isAvailable= false;
-        }
-    }
-
-    public override bool IsAvailable()
-    {
-        return isAvailable;
-    }
-
-    public override bool IsSquare()
-    {
-        return true;
-    }
     /// <summary>
     /// Is called whenever a bloc got a color, checks if something appends (victory/defeat).
     /// </summary>
@@ -197,6 +199,10 @@ public class Square : Block
         return false;
     }
 
+    /// <summary>
+    /// Same as CheckEndGame but for simulation.
+    /// </summary>
+    /// <returns></returns>
     public override bool CheckAIEndGame()
     {
         CheckAIDirectLine("Up", "Down");

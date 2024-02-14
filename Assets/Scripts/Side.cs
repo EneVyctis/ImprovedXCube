@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class Side : Block
 {
-    
+    #region variables
     private bool isVertical;
 
     private Dictionary<String, GameObject> squareNeighbor = new Dictionary<String, GameObject>();
+    #endregion
 
     private void Awake()
     {
+        //A side block can either be vertical or horizontal. 
         if(gameObject.transform.eulerAngles.z != 0)
         {
             isVertical = true;
@@ -25,12 +27,12 @@ public class Side : Block
     {
         if (team && (hasColor == false))
         {
-            changeColor(team, lastBlue);
+            ChangeColor(team, lastBlue);
             return true;
         }
         if (!team && (hasColor == false))
         {
-            changeColor(team, lastRed);
+            ChangeColor(team, lastRed);
 
             return true;
         }
@@ -38,7 +40,7 @@ public class Side : Block
         return false;
     }
 
-    private void changeColor(bool team, Sprite sprite )
+    private void ChangeColor(bool team, Sprite sprite )
     {
         blockColor = team;
         spriteRenderer.sprite = sprite;
@@ -82,6 +84,11 @@ public class Side : Block
         }
     }
 
+    /// <summary>
+    /// Same as SetColor but for simulations.
+    /// </summary>
+    /// <param name="team"></param>
+    /// <returns></returns>
     #region AI functions
     public override bool SetAIColor(bool team)
     {

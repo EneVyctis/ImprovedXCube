@@ -8,6 +8,34 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance => instance;
     private static GameManager instance;
 
+    #region variables
+    //All of the following dictionnaries store useful pieces of information for map's elements and are used to generate the map. The last parameter of the Vector3 is the rotation.
+    public Dictionary<Int32, Vector3> squarePositions = new Dictionary<int, Vector3>();
+    public Dictionary<Int32, Vector3> sidePositions = new Dictionary<int, Vector3>();
+    public Dictionary<Int32, GameObject> sideList = new Dictionary<Int32, GameObject>();
+    public Dictionary<Int32, GameObject> squareList = new Dictionary<Int32, GameObject>();
+
+    //These two dictionnaries are used not for the generation but for every other steps of the game.
+    public Dictionary<Int32, GameObject> blocksList = new Dictionary<Int32, GameObject>();
+    public Dictionary<Int32, GameObject> historyList = new Dictionary<Int32, GameObject>();
+
+    //Prefabs for the map.
+    [SerializeField] private GameObject square;
+    [SerializeField] private GameObject side;
+
+    [SerializeField] private AIManager aI;
+    [SerializeField] private GameUiManager uiManager;
+
+    //Game's variables.
+    public bool color = true;
+    private int remainingActions = 2;
+    public bool isAiPlaying;
+    public string player1Name;
+    public string player2Name;
+    public float time1;
+    public float time2;
+    #endregion
+
     private void Awake()
     {
         if(instance == null)
@@ -22,31 +50,11 @@ public class GameManager : MonoBehaviour
         {
             player1Name = PlayerPrefs.GetString("PlayerName");
         }
+        if (GameModeManager.isVersusAi)
+        {
+            player2Name = "AI";
+        }
     }
-
-    #region variables
-    //Both dictionnaries store useful pieces of information for map's elements. The last parameter of the Vector3 is the rotation.
-    public Dictionary<Int32,Vector3> squarePositions = new Dictionary<int, Vector3>();
-    public Dictionary<Int32, Vector3> sidePositions = new Dictionary<int, Vector3>();
-    public Dictionary<Int32, GameObject> sideList = new Dictionary<Int32, GameObject>();
-    public Dictionary<Int32, GameObject> squareList = new Dictionary<Int32, GameObject>();
-    public Dictionary<Int32, GameObject> blocksList = new Dictionary<Int32, GameObject>();
-    public Dictionary<Int32, GameObject> playsList = new Dictionary<Int32, GameObject>();
-    private int[] history = new int[0];
-    [SerializeField] private GameObject square;
-    [SerializeField] private GameObject side;
-    [SerializeField] private AIManager aI;
-
-    //For the whole game, true means blue player, false means red player
-    public bool color = true;
-    private int remainingActions = 2;
-    public bool isAiPlaying;
-    [SerializeField] private GameUiManager uiManager;
-    public string player1Name;
-    public string player2Name;
-    public float time1;
-    public float time2;
-    #endregion
 
     void Start()
     {
@@ -84,17 +92,18 @@ public class GameManager : MonoBehaviour
     }
 
 
+    #region Set-Up Functions
 
     /// <summary>
     /// Generates all coordonates of squares and sides and store them in squarepositions and sidepositions
     /// </summary>
     private void GeneratePositions()
     {
-        for (int i =  0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
             {
-                squarePositions.Add(squarePositions.Count,new Vector3(-1.5f + j, 1.5f - i,0f));
+                squarePositions.Add(squarePositions.Count, new Vector3(-1.5f + j, 1.5f - i, 0f));
             }
         }
 
@@ -113,21 +122,20 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void DrawMap()
     {
-        foreach(KeyValuePair<int,Vector3> pair in squarePositions)
+        foreach (KeyValuePair<int, Vector3> pair in squarePositions)
         {
             GameObject clone = Instantiate(square, pair.Value, Quaternion.identity);
             squareList.Add(squareList.Count, clone);
             blocksList.Add(blocksList.Count, clone);
-            Debug.Log(blocksList.GetValueOrDefault(blocksList.Count-1));
-            clone.GetComponent<Block>().key = squareList.Count -1;
+            clone.GetComponent<Block>().key = squareList.Count - 1;
         }
 
-        foreach(KeyValuePair <int,Vector3> pair in sidePositions)
+        foreach (KeyValuePair<int, Vector3> pair in sidePositions)
         {
-            GameObject clone =  Instantiate(side, pair.Value, Quaternion.Euler(new Vector3(0f,0f,pair.Value.z)));
+            GameObject clone = Instantiate(side, pair.Value, Quaternion.Euler(new Vector3(0f, 0f, pair.Value.z)));
             sideList.Add(squareList.Count + sideList.Count, clone);
             blocksList.Add(blocksList.Count, clone);
-            clone.GetComponent<Block>().key = blocksList.Count -1;
+            clone.GetComponent<Block>().key = blocksList.Count - 1;
         }
     }
 
@@ -136,7 +144,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void ManageNeighbors()
     {
-        foreach(KeyValuePair<Int32,GameObject> pair in squareList)
+        foreach (KeyValuePair<Int32, GameObject> pair in squareList)
         {
             pair.Value.GetComponent<Square>().CalculateNeighborhood();
         }
@@ -152,9 +160,17 @@ public class GameManager : MonoBehaviour
     /// <param name="collider"></param>
     /// <param name="color"></param>
     /// <returns></returns>
+    #endregion
+
+
+    #region Game functions
+    ///<summary>
+    /// Just a intermediate functions that calls setSprite functions with the correct parameters.
+    ///</summary>
+    ///<param name="collider"></param><param name="color"></param>
     private bool ChangeState(GameObject collider, bool color)
     {
-        if(collider.TryGetComponent<Block>(out Block block))
+        if (collider.TryGetComponent<Block>(out Block block))
         {
             if (block.setSprite(color))
             {
@@ -177,12 +193,29 @@ public class GameManager : MonoBehaviour
             GameObject block = hit.collider.gameObject;
             if (ChangeState(block, color))
             {
-                playsList.Add(playsList.Count, block);
+                historyList.Add(historyList.Count, block);
                 remainingActions -= 1;
             }
         }
     }
 
+    /// <summary>
+    /// Manage end of the game (yeah really informative i know).
+    /// </summary>
+    /// <param name="winner"></param>
+    public void GameHasEnded(bool winner)
+    {
+        Time.timeScale = 0;
+        uiManager.PrintGameOver(winner);
+    }
+
+    #endregion
+
+
+    /// <summary>
+    /// Same as the CheckAndChangeBlock() function but adapt to AI's uses.
+    /// </summary>
+    /// <param name="position"></param>
     public void AICheckAndChangeBlock(Vector2 position)
     {
         RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
@@ -191,7 +224,7 @@ public class GameManager : MonoBehaviour
             GameObject block = hit.collider.gameObject;
             if (ChangeState(block, color))
             {
-                playsList.Add(playsList.Count, block);
+                historyList.Add(historyList.Count, block);
                 remainingActions -= 1;
             }
         }
@@ -216,15 +249,5 @@ public class GameManager : MonoBehaviour
         {
             GameHasEnded(!color);
         }
-    }
-
-    /// <summary>
-    /// Manage end of the game (yeah really informative i know).
-    /// </summary>
-    /// <param name="winner"></param>
-    public void GameHasEnded(bool winner)
-    {
-        Time.timeScale = 0;
-        uiManager.PrintGameOver(winner);
     }
 }
