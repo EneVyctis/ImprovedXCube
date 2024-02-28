@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     //Game's variables.
     public bool color = true;
     private int remainingActions = 2;
+    private bool isGameOver;
     public bool isAiPlaying;
     public string player1Name;
     public string player2Name;
@@ -58,7 +59,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        Time.timeScale = 1;
+        isGameOver = false;
         GeneratePositions();
         DrawMap();
         ManageNeighbors();
@@ -67,26 +68,29 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        UpdateAndManageTime();
-        if (remainingActions <= 0)
+        if (isGameOver == false)
         {
-            color = !color;
-            remainingActions = 2;
-        }
-        if (GameModeManager.isVersusAi == false || color == true) 
-        {
-            if (Input.touchCount > 0)
+            UpdateAndManageTime();
+            if (remainingActions <= 0)
             {
-                Touch touch = Input.GetTouch(0);
-                CheckAndChangeBlock(touch.position);
+                color = !color;
+                remainingActions = 2;
             }
-        }
-        else
-        {
-            if(color == false && isAiPlaying == false)
+            if (GameModeManager.isVersusAi == false || color == true)
             {
-                isAiPlaying = true;
-                StartCoroutine(aI.RunAI());
+                if (Input.touchCount > 0)
+                {
+                    Touch touch = Input.GetTouch(0);
+                    CheckAndChangeBlock(touch.position);
+                }
+            }
+            else
+            {
+                if (color == false && isAiPlaying == false)
+                {
+                    isAiPlaying = true;
+                    StartCoroutine(aI.RunAI());
+                }
             }
         }
     }
@@ -205,8 +209,8 @@ public class GameManager : MonoBehaviour
     /// <param name="winner"></param>
     public void GameHasEnded(bool winner)
     {
-        Time.timeScale = 0;
         uiManager.PrintGameOver(winner);
+        isGameOver = true;
     }
 
     #endregion
