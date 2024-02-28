@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class AIManager : MonoBehaviour
@@ -17,17 +18,55 @@ public class AIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Calculates each possible moove along with its score and store them in the "scores" dictionnary.
+    /// Manage the MiniMax algorithm.
     /// </summary>
-    /// <param name="Depth"></param>
-    private void MiniMax(int Depth, Dictionary<int, Vector3Int> scores)
+    /// <param name="Depth"></param> 
+    /// <param name="color"></param>
+    /// <param name="scores"></param>
+    private void MiniMax(int depth, bool color, Dictionary<int, Vector3Int> scores)
     {
-
         foreach (KeyValuePair<int, Block> pair in playableBlock)
         {
             int play1;
             int play2;
-            bool color = GameManager.Instance.color;
+            if (pair.Value.hasColor == false && pair.Value.IsAvailable() == true)
+            {
+                play1 = pair.Key;
+                pair.Value.SetAIColor(color);
+                foreach (KeyValuePair<int, Block> couple in playableBlock)
+                {
+                    if (couple.Value.hasColor == false && couple.Value.IsAvailable() == true)
+                    {
+                        int score = 0;
+                        play2 = couple.Key;
+                        couple.Value.SetAIColor(color);
+                        score += CalculatesScores(play1, play2, color);
+                        for(int k=1; k<depth; k++)
+                        {
+                            Debug.Log("hello");
+                            color = !color;
+                            AiTurn(score, color);
+                        }
+                        scores.Add(scores.Count, new Vector3Int(score, play1, play2));
+                        couple.Value.AIFactoryReset();
+                    }
+                }
+                pair.Value.AIFactoryReset();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Is used by MiniMax() while deth>1 to simulate a turn and change the score according to the outcome. 
+    /// </summary>
+    /// <param name="score"></param>
+    /// <param name="color"></param>
+    private void AiTurn(int score, bool color)
+    {
+        foreach (KeyValuePair<int, Block> pair in playableBlock)
+        {
+            int play1;
+            int play2;
             if (pair.Value.hasColor == false && pair.Value.IsAvailable() == true)
             {
                 play1 = pair.Key;
@@ -38,7 +77,7 @@ public class AIManager : MonoBehaviour
                     {
                         play2 = couple.Key;
                         couple.Value.SetAIColor(color);
-                        CalculatesScores(play1, play2, scores);
+                        score += CalculatesScores(play1, play2, color);
                         couple.Value.AIFactoryReset();
                     }
                 }
@@ -47,7 +86,14 @@ public class AIManager : MonoBehaviour
         }
     }
 
-    private bool CalculatesScores(int play1, int play2, Dictionary<int, Vector3Int> scores)
+    /// <summary>
+    /// Calculates and returns the score of a playmoove. The stronger this function get, the strongest the AI. 
+    /// </summary>
+    /// <param name="play1"></param>
+    /// <param name="play2"></param>
+    /// <param name="color"></param>
+    /// <returns></returns>
+    private int CalculatesScores(int play1, int play2,bool color)
     {
         Block block1 = playableBlock.GetValueOrDefault(play1);
         Block block2 = playableBlock.GetValueOrDefault(play2);
@@ -56,42 +102,40 @@ public class AIManager : MonoBehaviour
         {
             if (block1.CheckAIEndGame())
             {
-                scores.Add(scores.Count, new Vector3Int(1000, play1, play2));
-                return true;
+                return 1000;
             }
             if(block2.IsSquare())
             {
-                scores.Add(scores.Count, new Vector3Int(800, play1, play2));
-                return true;
+                return 800;
             }
         }
         if (block2.IsSquare())
         {
             if (block2.CheckAIEndGame())
             {
-                scores.Add(scores.Count, new Vector3Int(1000, play1, play2));
-                return true;
+                return 1000;
             }
             else
             {
-                scores.Add(scores.Count, new Vector3Int(500, play1, play2));
-                return true;
+                return 500;
             }
         }
-        
-        //Give a random score so the AI choose a random play by default.
-        scores.Add(scores.Count, new Vector3Int(Random.Range(0,100), play1, play2));
 
-        return true;
+        return Random.Range(0,100);
     }
     
+
+    /// <summary>
+    /// Manage the AI turn. 
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator RunAI()
     {
         Dictionary<int, GameObject> historyList = GameManager.Instance.historyList;
         playableBlock.Remove(historyList.GetValueOrDefault(historyList.Count - 2 ).GetComponent<Block>().key);
         playableBlock.Remove(historyList.GetValueOrDefault(historyList.Count - 1).GetComponent<Block>().key);
         Dictionary<int, Vector3Int> scores = new Dictionary<int, Vector3Int>();
-        MiniMax(1, scores);
+        MiniMax(1, GameManager.Instance.color, scores);
         int playScore = 0;
         foreach(KeyValuePair<int, Vector3Int> pair in scores)
         {
