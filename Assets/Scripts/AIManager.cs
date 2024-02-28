@@ -43,7 +43,6 @@ public class AIManager : MonoBehaviour
                         score += CalculatesScores(play1, play2, color);
                         for(int k=1; k<depth; k++)
                         {
-                            Debug.Log("hello");
                             color = !color;
                             AiTurn(score, color);
                         }
@@ -97,31 +96,59 @@ public class AIManager : MonoBehaviour
     {
         Block block1 = playableBlock.GetValueOrDefault(play1);
         Block block2 = playableBlock.GetValueOrDefault(play2);
-
-        if (block1.IsSquare())
+        if (!color)
         {
-            if (block1.CheckAIEndGame())
+            if (block1.IsSquare())
             {
-                return 1000;
+                if (block1.CheckAIEndGame())
+                {
+                    return 1000;
+                }
+                if (block2.IsSquare())
+                {
+                    return 800;
+                }
             }
-            if(block2.IsSquare())
+            if (block2.IsSquare())
             {
-                return 800;
+                if (block2.CheckAIEndGame())
+                {
+                    return 1000;
+                }
+                else
+                {
+                    return 500;
+                }
             }
-        }
-        if (block2.IsSquare())
-        {
-            if (block2.CheckAIEndGame())
-            {
-                return 1000;
-            }
-            else
-            {
-                return 500;
-            }
-        }
 
-        return Random.Range(0,100);
+            return Random.Range(0, 100);
+        }
+        else
+        {
+            if (block1.IsSquare())
+            {
+                if (block1.CheckAIEndGame())
+                {
+                    return -10000;
+                }
+                if (block2.IsSquare())
+                {
+                    return -1100;
+                }
+            }
+            if (block2.IsSquare())
+            {
+                if (block2.CheckAIEndGame())
+                {
+                    return -10000;
+                }
+                else
+                {
+                    return -300;
+                }
+            }
+            return -Random.Range(0, 100);
+        }
     }
     
 
@@ -135,7 +162,18 @@ public class AIManager : MonoBehaviour
         playableBlock.Remove(historyList.GetValueOrDefault(historyList.Count - 2 ).GetComponent<Block>().key);
         playableBlock.Remove(historyList.GetValueOrDefault(historyList.Count - 1).GetComponent<Block>().key);
         Dictionary<int, Vector3Int> scores = new Dictionary<int, Vector3Int>();
-        MiniMax(1, GameManager.Instance.color, scores);
+        if (playableBlock.Count < 10)
+        {
+            MiniMax(5, GameManager.Instance.color, scores);
+        }
+        if ( 10 <= playableBlock.Count && playableBlock.Count < 30)
+        {
+            MiniMax(3, GameManager.Instance.color, scores);
+        }
+        else
+        {
+            MiniMax(1, GameManager.Instance.color, scores);
+        }
         int playScore = 0;
         foreach(KeyValuePair<int, Vector3Int> pair in scores)
         {
