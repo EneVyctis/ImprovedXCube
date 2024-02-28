@@ -23,7 +23,7 @@ public class AIManager : MonoBehaviour
     /// <param name="Depth"></param> 
     /// <param name="color"></param>
     /// <param name="scores"></param>
-    private void MiniMax(int depth, bool color, Dictionary<int, Vector3Int> scores)
+    private IEnumerator MiniMax(int depth, bool color, Dictionary<int, Vector3Int> scores)
     {
         foreach (KeyValuePair<int, Block> pair in playableBlock)
         {
@@ -34,7 +34,7 @@ public class AIManager : MonoBehaviour
                 play1 = pair.Key;
                 pair.Value.SetAIColor(color);
                 foreach (KeyValuePair<int, Block> couple in playableBlock)
-                {
+                {   
                     if (couple.Value.hasColor == false && couple.Value.IsAvailable() == true)
                     {
                         int score = 0;
@@ -44,7 +44,7 @@ public class AIManager : MonoBehaviour
                         for(int k=1; k<depth; k++)
                         {
                             color = !color;
-                            AiTurn(score, color);
+                            yield return StartCoroutine(AiTurn(score, color));
                         }
                         scores.Add(scores.Count, new Vector3Int(score, play1, play2));
                         couple.Value.AIFactoryReset();
@@ -53,6 +53,7 @@ public class AIManager : MonoBehaviour
                 pair.Value.AIFactoryReset();
             }
         }
+        yield return null;
     }
 
     /// <summary>
@@ -60,7 +61,7 @@ public class AIManager : MonoBehaviour
     /// </summary>
     /// <param name="score"></param>
     /// <param name="color"></param>
-    private void AiTurn(int score, bool color)
+    private IEnumerator AiTurn(int score, bool color)
     {
         foreach (KeyValuePair<int, Block> pair in playableBlock)
         {
@@ -83,6 +84,7 @@ public class AIManager : MonoBehaviour
                 pair.Value.AIFactoryReset();
             }
         }
+        yield return null;
     }
 
     /// <summary>
@@ -164,15 +166,15 @@ public class AIManager : MonoBehaviour
         Dictionary<int, Vector3Int> scores = new Dictionary<int, Vector3Int>();
         if (playableBlock.Count < 10)
         {
-            MiniMax(5, GameManager.Instance.color, scores);
+            yield return StartCoroutine(MiniMax(5, GameManager.Instance.color, scores));
         }
         if ( 10 <= playableBlock.Count && playableBlock.Count < 30)
         {
-            MiniMax(3, GameManager.Instance.color, scores);
+            yield return StartCoroutine(MiniMax(3, GameManager.Instance.color, scores));
         }
         else
         {
-            MiniMax(1, GameManager.Instance.color, scores);
+            yield return StartCoroutine(MiniMax(1, GameManager.Instance.color, scores));
         }
         int playScore = 0;
         foreach(KeyValuePair<int, Vector3Int> pair in scores)
