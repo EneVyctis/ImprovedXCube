@@ -73,6 +73,11 @@ public class GameManager : MonoBehaviour
             UpdateAndManageTime();
             if (remainingActions <= 0)
             {
+                if (historyList.Count >= 4)
+                {
+                    historyList.GetValueOrDefault(historyList.Count - 4).GetComponent<Block>().setDefinitiveSprite();
+                    historyList.GetValueOrDefault(historyList.Count - 3).GetComponent<Block>().setDefinitiveSprite();
+                }
                 color = !color;
                 remainingActions = 2;
             }

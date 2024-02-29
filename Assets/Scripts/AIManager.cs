@@ -164,11 +164,11 @@ public class AIManager : MonoBehaviour
         playableBlock.Remove(historyList.GetValueOrDefault(historyList.Count - 2 ).GetComponent<Block>().key);
         playableBlock.Remove(historyList.GetValueOrDefault(historyList.Count - 1).GetComponent<Block>().key);
         Dictionary<int, Vector3Int> scores = new Dictionary<int, Vector3Int>();
-        if (playableBlock.Count < 10)
+        if (playableBlock.Count < 16)
         {
             yield return StartCoroutine(MiniMax(5, GameManager.Instance.color, scores));
         }
-        if ( 10 <= playableBlock.Count && playableBlock.Count < 30)
+        if ( 16 <= playableBlock.Count && playableBlock.Count < 40)
         {
             yield return StartCoroutine(MiniMax(3, GameManager.Instance.color, scores));
         }
